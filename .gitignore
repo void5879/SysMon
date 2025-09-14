@@ -1,0 +1,7 @@
+# Frontend build artifacts
+frontend/target/
+
+# Backend compiled code
+backend/src/*.o
+backend/src/*.exe
+backend/src/sysmon
