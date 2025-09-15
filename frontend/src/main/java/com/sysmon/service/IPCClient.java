@@ -1,3 +1,18 @@
+/*
+  ██████╗ ██╗      ██╗ ███████╗ ███╗   ██╗ ████████╗
+ ██╔════╝ ██║      ██║ ██╔════╝ ████╗  ██║ ╚══██╔══╝
+ ██║      ██║      ██║ █████╗   ██╔██╗ ██║    ██║   
+ ██║      ██║      ██║ ██╔══╝   ██║╚██╗██║    ██║   
+ ╚██████╗ ███████╗ ██║ ███████╗ ██║ ╚████║    ██║   
+  ╚═════╝ ╚══════╝ ╚═╝ ╚══════╝ ╚═╝  ╚═══╝    ╚═╝  
+*/
+
+/*
+ - This class (acts as the client) handles the low-level communication with the C backend.
+ - Responsible for the Inter-Process Communication (IPC) part of the application.
+ - Connects to the backend over a UNIX domain socket.
+ - Sends commands (GET_PROCESSES, KILL) and parses the raw text data received from the backend.  
+*/
 package com.sysmon.service;
 
 import com.sysmon.model.ProcessInfo;
@@ -26,13 +41,11 @@ public class IPCClient {
             if (channel.connect(address)) {
                 System.out.println("Connected successfully!");
 
-                // Send command using ByteBuffer
                 String command = "GET_PROCESSES\n";
                 ByteBuffer writeBuffer = ByteBuffer.wrap(command.getBytes(StandardCharsets.UTF_8));
                 channel.write(writeBuffer);
                 System.out.println("Sent GET_PROCESSES command");
 
-                // Read response using ByteBuffer
                 ByteBuffer readBuffer = ByteBuffer.allocate(8192);
                 StringBuilder response = new StringBuilder();
 
@@ -41,7 +54,6 @@ public class IPCClient {
                     response.append(StandardCharsets.UTF_8.decode(readBuffer));
                     readBuffer.clear();
 
-                    // Check if received the complete response
                     String responseStr = response.toString();
                     if (responseStr.contains("END_PROCESS_LIST")) {
                         break;
@@ -51,7 +63,6 @@ public class IPCClient {
                 String responseStr = response.toString();
                 System.out.println("Received response (" + responseStr.length() + " chars)");
 
-                // Parse the response
                 String[] lines = responseStr.split("\n");
                 boolean foundBegin = false;
                 int lineCount = 0;
@@ -99,7 +110,6 @@ public class IPCClient {
                 }
 
                 System.out.println("Total processes parsed: " + processList.size());
-
             } else {
                 System.err.println("Failed to connect to socket");
             }
@@ -114,13 +124,11 @@ public class IPCClient {
         UnixDomainSocketAddress address = UnixDomainSocketAddress.of(SOCKET_PATH);
         try (SocketChannel channel = SocketChannel.open(StandardProtocolFamily.UNIX)) {
             if (channel.connect(address)) {
-                // Send the formatted KILL command
                 String command = "KILL;" + pid + ";" + signal + "\n";
                 ByteBuffer writeBuffer = ByteBuffer.wrap(command.getBytes(StandardCharsets.UTF_8));
                 channel.write(writeBuffer);
                 System.out.println("Sent command: " + command.trim());
 
-                // Read response
                 ByteBuffer readBuffer = ByteBuffer.allocate(256);
                 channel.read(readBuffer);
                 readBuffer.flip();
