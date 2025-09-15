@@ -1,3 +1,17 @@
+/*
+ ██████╗   █████╗  ████████╗  █████╗      ███╗   ███╗  ██████╗  ██████╗  ███████╗ ██╗     
+ ██╔══██╗ ██╔══██╗ ╚══██╔══╝ ██╔══██╗     ████╗ ████║ ██╔═══██╗ ██╔══██╗ ██╔════╝ ██║     
+ ██║  ██║ ███████║    ██║    ███████║     ██╔████╔██║ ██║   ██║ ██║  ██║ █████╗   ██║     
+ ██║  ██║ ██╔══██║    ██║    ██╔══██║     ██║╚██╔╝██║ ██║   ██║ ██║  ██║ ██╔══╝   ██║     
+ ██████╔╝ ██║  ██║    ██║    ██║  ██║     ██║ ╚═╝ ██║ ╚██████╔╝ ██████╔╝ ███████╗ ███████╗
+ ╚═════╝  ╚═╝  ╚═╝    ╚═╝    ╚═╝  ╚═╝     ╚═╝     ╚═╝  ╚═════╝  ╚═════╝  ╚══════╝ ╚══════╝
+*/
+
+/*
+ - This is the Data model.
+ - It is basically a template or blueprint for how a single process is represented in the application.
+ - Kinda like a struct in C but with Java's OOP features.
+*/
 package com.sysmon.model;
 
 import javafx.beans.property.IntegerProperty;
