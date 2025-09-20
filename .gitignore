@@ -1,5 +1,8 @@
 # Frontend build artifacts
 frontend/target/
+frontend/.classpath
+frontend/.project
+frontend/.settings
 
 # Backend compiled code
 backend/src/*.o
