@@ -1,3 +1,24 @@
+/*
+ ██████╗   █████╗   ██████╗ ██╗  ██╗ ███████╗ ███╗   ██╗ ██████╗
+ ██╔══██╗ ██╔══██╗ ██╔════╝ ██║ ██╔╝ ██╔════╝ ████╗  ██║ ██╔══██╗
+ ██████╔╝ ███████║ ██║      █████╔╝  █████╗   ██╔██╗ ██║ ██║  ██║
+ ██╔══██╗ ██╔══██║ ██║      ██╔═██╗  ██╔══╝   ██║╚██╗██║ ██║  ██║
+ ██████╔╝ ██║  ██║ ╚██████╗ ██║  ██╗ ███████╗ ██║ ╚████║ ██████╔╝
+ ╚═════╝  ╚═╝  ╚═╝  ╚═════╝ ╚═╝  ╚═╝ ╚══════╝ ╚═╝  ╚═══╝ ╚═════╝
+*/
+
+/*
+ - This file provides the implementation details for the backend functions
+ employed by the appliation.
+ - readProcStat: reads the stat file in the proc dir and extracts the pid, ppid,
+ state and processName.
+ - readProcStatus: reads the status file in the proc dir and extracts the uid to
+ get the userName.
+ - scanProcDir: uses the readProcStat and readProcStatus to get and return the
+ ongoing list of processess.
+ - formatProcessList: formats the list returned by the scanProcDir so as to send
+ it to the client.
+*/
 #include "procParser.h"
 #include <ctype.h>
 #include <dirent.h>
