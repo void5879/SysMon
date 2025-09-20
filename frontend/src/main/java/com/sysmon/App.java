@@ -6,6 +6,11 @@
  ███████╗ ██║ ╚████║    ██║    ██║  ██║    ██║        ██║      ╚██████╔╝ ██║ ██║ ╚████║    ██║   
  ╚══════╝ ╚═╝  ╚═══╝    ╚═╝    ╚═╝  ╚═╝    ╚═╝        ╚═╝       ╚═════╝  ╚═╝ ╚═╝  ╚═══╝    ╚═╝
 */
+
+/*
+ - JavaFX application entry point.
+ - Loads the main FXML layout and initializes the primary application window.
+*/
 package com.sysmon;
 
 import javafx.application.Application;

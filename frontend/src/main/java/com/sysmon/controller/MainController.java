@@ -6,6 +6,12 @@
  ╚██████╗ ╚██████╔╝ ██║ ╚████║    ██║    ██║  ██║ ╚██████╔╝ ███████╗ ███████╗ ███████╗ ██║  ██║
   ╚═════╝  ╚═════╝  ╚═╝  ╚═══╝    ╚═╝    ╚═╝  ╚═╝  ╚═════╝  ╚══════╝ ╚══════╝ ╚══════╝ ╚═╝  ╚═╝
 */
+
+/*
+ - Main UI controller for the task manager application.
+ - Manages process table updates, user interactions, and background services.
+ - Implements periodic refresh while preserving scroll position and selection.
+*/
 package com.sysmon.controller;
 
 import com.sysmon.model.ProcessInfo;
