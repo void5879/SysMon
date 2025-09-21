@@ -93,8 +93,8 @@ SysMon/
 1. **Clone the repository**
 
     ```bash
-    git clone https://github.com/yourusername/sysmon.git
-    cd sysmon
+    git clone https://github.com/yourusername/SysMon.git
+    cd SysMon
     ```
 
 2. **Build the C backend**
@@ -207,4 +207,3 @@ This project demonstrates:
 ---
 
 **Note**: This is an educational project focused on understanding system programming and inter-process communication. It may or may not be actively maintained.
-
