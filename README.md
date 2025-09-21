@@ -48,20 +48,18 @@ A cross-language system process monitor for Linux featuring a high-performance C
 | Backend       | C                   | High-performance system calls and /proc parsing |
 | Frontend      | Java 21 + JavaFX    | Modern UI framework with data binding           |
 | Communication | Unix Domain Sockets | Low-latency IPC                                 |
-| Build System  | Make + Maven        | Native compilation + Java dependency management |
 
 ## 📁 Project Structure
 
 ```
 SysMon/
 ├── backend/
-│   ├── src/
+│   └── src/
 │       ├── main.c              # Socket server entry point
 │       ├── procParser.c        # /proc filesystem parser
 │       ├── procParser.h        # Parser interface
 │       ├── terminator.c        # Process termination
 │       └── terminator.h        # Termination interface
-│
 ├── frontend/
 │   ├── src/main/java/com/sysmon/
 │   │   ├── App.java            # JavaFX application entry
@@ -75,6 +73,7 @@ SysMon/
 │   ├── src/main/resources/com/sysmon/
 │   │   └── MainView.fxml       # UI layout definition
 │   └── pom.xml                 # Maven configuration
+├── LICENSE                     # MIT License
 └── README.md
 ```
 
