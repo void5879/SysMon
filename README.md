@@ -154,14 +154,7 @@ This project is still a WIP. Current functionality includes basic process monito
 ## 📋 TODO list
 
 - [ ] **Memory Usage Display**
-    - [ ] Add memory columns (RSS, VSZ, %MEM)
-    - [ ] Parse `/proc/PID/status` for memory information
-    - [ ] Implement memory usage sorting
-
 - [ ] **CPU Usage Monitoring**
-    - [ ] Calculate CPU percentage per process
-    - [ ] Add CPU usage column to table
-    - [ ] Implement CPU-based sorting
 
 ## 🤝 Contributing
 
@@ -172,8 +165,6 @@ This is a personal learning project, but feel free (highly encourage!) to fork o
 - System programming in C
 - JavaFX GUI development
 - Inter-process communication
-- Linux system administration
-- Real-time data visualization
 
 ## 📊 Performance
 
@@ -184,10 +175,10 @@ This is a personal learning project, but feel free (highly encourage!) to fork o
 
 ## 🐛 Known Issues
 
-- [ ] Selection may be lost if process disappears between refreshes
-- [ ] No graceful shutdown handling for backend server
-- [ ] Limited error handling for malformed /proc entries
-- [ ] Frontend doesn't auto-reconnect if backend restarts
+- Selection may be lost if process disappears between refreshes
+- No graceful shutdown handling for backend server
+- Limited error handling for malformed /proc entries
+- Frontend doesn't auto-reconnect if backend restarts
 
 ## 📝 License
 
@@ -202,7 +193,6 @@ This project demonstrates:
 - **GUI Development**: Modern JavaFX with FXML and data binding
 - **Threading**: Background services and thread-safe UI updates
 - **IPC**: Cross-language process communication
-- **Software Architecture**: Clean separation of concerns with MVC pattern
 
 ---
 
