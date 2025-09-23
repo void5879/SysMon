@@ -106,9 +106,7 @@ SysMon/
 
 ## 🔌 Communication Protocol
 
-The application uses a simple text-based protocol over Unix domain sockets:
-
-```
+The application uses a simple text-based protocol over Unix domain sockets.
 
 ## 🚧 Work in Progress
 
