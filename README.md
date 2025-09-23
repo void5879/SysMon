@@ -95,6 +95,7 @@ SysMon/
     ```bash
     git clone https://github.com/void5879/SysMon.git
     cd SysMon
+    chmod +x SysMon.sh
     ./SysMon.sh
     ```
 ### Usage
