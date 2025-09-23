@@ -95,15 +95,14 @@ SysMon/
     ```bash
     git clone https://github.com/void5879/SysMon.git
     cd SysMon
-    ./SysMon
+    ./SysMon.sh
     ```
 ### Usage
 
-1. Start the backend server first
-2. Launch the JavaFX frontend
-3. The process table will automatically populate and refresh every 3 seconds
-4. Select a process and click "End Task" to send SIGTERM signal
-5. Scroll position and selection are preserved during refreshes
+1. Run the Automation scipt (./SysMon.sh)
+2. The process table will automatically populate and refresh every 3 seconds
+3. Select a process and click "End Task" to send SIGTERM signal
+4. Scroll position and selection are preserved during refreshes
 
 ## 🔌 Communication Protocol
 
