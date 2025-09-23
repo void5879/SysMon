@@ -74,6 +74,7 @@ SysMon/
 │   │   └── MainView.fxml       # UI layout definition
 │   └── pom.xml                 # Maven configuration
 ├── LICENSE                     # MIT License
+├── SysMon.sh                   # Automation script 
 └── README.md
 ```
 
@@ -81,42 +82,21 @@ SysMon/
 
 ### Prerequisites
 
-- **Linux OS** (tested on Arch)
+- **Linux OS** (tested on Arch and Ubuntu)
 - **GCC** compiler
-- **Java 21** or higher
+- **Java 24** or higher
 - **Maven** 3.6+
 - **JavaFX** (included in dependencies)
 
 ### Building and Running
 
-1. **Clone the repository**
+1. **Clone the repository and run the script**
 
     ```bash
-    git clone https://github.com/yourusername/SysMon.git
+    git clone https://github.com/void5879/SysMon.git
     cd SysMon
+    ./SysMon
     ```
-
-2. **Build the C backend**
-
-    ```bash
-    cd backend
-    gcc main.c procParser.c terminator.c -o sysmon
-    ```
-
-3. **Start the backend server**
-
-    ```bash
-    ./sysmon
-    ```
-
-    The server will listen on `/tmp/SysMon`
-
-4. **Build and run the frontend** (in a new terminal)
-    ```bash
-    cd frontend
-    mvn clean javafx:run
-    ```
-
 ### Usage
 
 1. Start the backend server first
@@ -129,21 +109,6 @@ SysMon/
 
 The application uses a simple text-based protocol over Unix domain sockets:
 
-### Commands
-
-| Command       | Format              | Response                    |
-| ------------- | ------------------- | --------------------------- |
-| Get Processes | `GET_PROCESSES\n`   | Process list with markers   |
-| Kill Process  | `KILL;PID;SIGNAL\n` | `OK\n` or `ERROR;message\n` |
-
-### Response Format
-
-```
-BEGIN_PROCESS_LIST
-PID    PPID    USER    STATE    COMMAND
-1234   0       root    R        systemd
-5678   1234    user    S        bash
-END_PROCESS_LIST
 ```
 
 ## 🚧 Work in Progress
