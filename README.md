@@ -46,7 +46,7 @@ A cross-language system process monitor for Linux featuring a high-performance C
 | Component     | Technology          | Purpose                                         |
 | ------------- | ------------------- | ----------------------------------------------- |
 | Backend       | C                   | High-performance system calls and /proc parsing |
-| Frontend      | Java 21 + JavaFX    | Modern UI framework with data binding           |
+| Frontend      | Java 24 + JavaFX    | Modern UI framework with data binding           |
 | Communication | Unix Domain Sockets | Low-latency IPC                                 |
 
 ## 📁 Project Structure
