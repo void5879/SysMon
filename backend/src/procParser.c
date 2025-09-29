@@ -29,7 +29,6 @@
 #include <sys/types.h>
 
 static void readProcStat(const char *filepath, ProcessData *p) {
-
   p->pid = 0;
   FILE *file = fopen(filepath, "r");
   if (file == NULL) {
@@ -64,7 +63,6 @@ static void readProcStat(const char *filepath, ProcessData *p) {
 }
 
 static void readProcStatus(const char *filepath, ProcessData *p) {
-
   uid_t uid = -1;
   FILE *file = fopen(filepath, "r");
   if (file == NULL) {
@@ -90,7 +88,6 @@ static void readProcStatus(const char *filepath, ProcessData *p) {
 }
 
 ProcessData *scanProcDir(size_t *processCount) {
-
   size_t capacity = 256;
   *processCount = 0;
 
@@ -144,7 +141,6 @@ ProcessData *scanProcDir(size_t *processCount) {
 }
 
 char *formatProcessList(ProcessData *processList, size_t processCount) {
-
   size_t capacity = 4096;
   char *response = malloc(capacity);
   if (response == NULL) {
