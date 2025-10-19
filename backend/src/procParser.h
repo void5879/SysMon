@@ -12,3 +12,6 @@ typedef struct {
 
 ProcessData *scanProcDir(size_t *processCount);
 char *formatProcessList(ProcessData *processList, size_t processCount);
+
+char *getCpuUsage(void);
+char *getMemUsage(void);

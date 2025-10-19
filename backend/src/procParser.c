@@ -1,3 +1,4 @@
+// Copyright (c) 2025 void5879. All Rights Reserved.
 /*
  ██████╗   █████╗   ██████╗ ██╗  ██╗ ███████╗ ███╗   ██╗ ██████╗
  ██╔══██╗ ██╔══██╗ ██╔════╝ ██║ ██╔╝ ██╔════╝ ████╗  ██║ ██╔══██╗
@@ -5,9 +6,7 @@
  ██╔══██╗ ██╔══██║ ██║      ██╔═██╗  ██╔══╝   ██║╚██╗██║ ██║  ██║
  ██████╔╝ ██║  ██║ ╚██████╗ ██║  ██╗ ███████╗ ██║ ╚████║ ██████╔╝
  ╚═════╝  ╚═╝  ╚═╝  ╚═════╝ ╚═╝  ╚═╝ ╚══════╝ ╚═╝  ╚═══╝ ╚═════╝
-*/
 
-/*
  - This file provides the implementation details for the backend functions
  employed by the appliation.
  - readProcStat: reads the stat file in the proc dir and extracts the pid, ppid,
@@ -23,6 +22,7 @@
 #include <ctype.h>
 #include <dirent.h>
 #include <pwd.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -185,4 +185,42 @@ char *formatProcessList(ProcessData *processList, size_t processCount) {
   strcat(response, footer);
 
   return response;
+}
+
+static uint64_t prevTotal = 0;
+static uint64_t prevIdle = 0;
+
+char *getCpuUsage(void) {
+  FILE *file = fopen("/proc/stat", "r");
+  if (!file) {
+    perror("Faile to open /proc/stat");
+    return NULL;
+  }
+  char line[512];
+  fgets(line, sizeof(line), file);
+  uint64_t user;
+  uint64_t nice;
+  uint64_t system;
+  uint64_t currentIdle;
+  uint64_t iowait;
+  uint64_t irq;
+  uint64_t softirq;
+  sscanf(line, "%lu %lu %lu %lu %lu %lu %lu", &user, &nice, &system,
+         &currentIdle, &iowait, &irq, &softirq);
+  uint64_t currentTotal =
+      user + nice + system + currentIdle + iowait + irq + softirq;
+  if (!prevTotal) {
+    prevTotal = currentTotal;
+    prevIdle = currentIdle;
+    return "CPU;0.0\n";
+  }
+  uint64_t deltaTotal = currentTotal - prevTotal;
+  uint64_t deltaIdle = currentIdle - prevIdle;
+  double usagePercent =
+      (1.0 - ((double)deltaIdle / (double)deltaTotal)) * 100.0;
+  prevTotal = currentTotal;
+  prevIdle = currentIdle;
+  char *out = malloc(50 * sizeof(char));
+  snprintf(out, sizeof(out), "CPU;%.1f\n", usagePercent);
+  return out;
 }
