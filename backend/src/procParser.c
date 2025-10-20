@@ -193,18 +193,18 @@ static uint64_t prevIdle = 0;
 char *getCpuUsage(void) {
   FILE *file = fopen("/proc/stat", "r");
   if (!file) {
-    perror("Faile to open /proc/stat");
+    perror("Failed to open /proc/stat");
     return NULL;
   }
   char line[512];
   fgets(line, sizeof(line), file);
-  uint64_t user;
-  uint64_t nice;
-  uint64_t system;
-  uint64_t currentIdle;
-  uint64_t iowait;
-  uint64_t irq;
-  uint64_t softirq;
+  uint64_t user = 0;
+  uint64_t nice = 0;
+  uint64_t system = 0;
+  uint64_t currentIdle = 0;
+  uint64_t iowait = 0;
+  uint64_t irq = 0;
+  uint64_t softirq = 0;
   sscanf(line, "%lu %lu %lu %lu %lu %lu %lu", &user, &nice, &system,
          &currentIdle, &iowait, &irq, &softirq);
   uint64_t currentTotal =
@@ -212,6 +212,7 @@ char *getCpuUsage(void) {
   if (!prevTotal) {
     prevTotal = currentTotal;
     prevIdle = currentIdle;
+    fclose(file);
     return "CPU;0.0\n";
   }
   uint64_t deltaTotal = currentTotal - prevTotal;
@@ -222,5 +223,39 @@ char *getCpuUsage(void) {
   prevIdle = currentIdle;
   char *out = malloc(50 * sizeof(char));
   snprintf(out, sizeof(out), "CPU;%.1f\n", usagePercent);
+  fclose(file);
+  return out;
+}
+
+char *getMemUsage(void) {
+  FILE *file = fopen("/proc/meminfo", "r");
+  if (!file) {
+    perror("Failed to open /proc/meminfo");
+    return NULL;
+  }
+  char line[100];
+  uint64_t memTotal = 0;
+  uint64_t memFree = 0;
+  uint64_t memAvail = 0;
+  uint64_t buffers = 0;
+  uint64_t cached = 0;
+  uint64_t swapTotal = 0;
+  uint64_t swapFree = 0;
+  int found = 0;
+  while ((fgets(line, sizeof(line), file)) && found < 7) {
+    found += (sscanf(line, "MemTotal: %lu kB", &memTotal) == 1);
+    found += (sscanf(line, "MemFree: %lu kB", &memFree) == 1);
+    found += (sscanf(line, "MemAvailable: %lu kB", &memAvail) == 1);
+    found += (sscanf(line, "Buffers: %lu kB", &buffers) == 1);
+    found += (sscanf(line, "Cached: %lu kB", &cached) == 1);
+    found += (sscanf(line, "SwapTotal: %lu kB", &swapTotal) == 1);
+    found += (sscanf(line, "SwapFree: %lu kB", &swapFree) == 1);
+  }
+  char *out = malloc(512 * sizeof(char));
+  snprintf(out, sizeof(out),
+           "MEM_TOTAL;%lu\nMEM_FREE;%lu\nMEM_AVAIL;%lu\nBUFFERS;%lu\nCACHED;%"
+           "lu\nSWAP_TOTAL;%lu\nSWAP_FREE;%lu\n",
+           memTotal, memFree, memAvail, buffers, cached, swapTotal, swapFree);
+  fclose(file);
   return out;
 }
