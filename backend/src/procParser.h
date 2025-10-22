@@ -16,3 +16,4 @@ char *formatProcessList(ProcessData *processList, size_t processCount);
 char *getCpuUsage(void);
 char *getMemUsage(void);
 char *getNetUsage(void);
+char *getDiskUsage(void);

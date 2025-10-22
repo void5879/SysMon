@@ -26,6 +26,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/statvfs.h>
 #include <sys/types.h>
 
 static void readProcStat(const char *filepath, ProcessData *p) {
@@ -296,4 +297,22 @@ char *getNetUsage(void) {
   snprintf(out, sizeof(out), "NET;%lu;%lu;\n", downSpeedBytes, upSpeedBytes);
   fclose(file);
   return out;
+}
+
+char *getDiskUsage(void) {
+  struct statvfs diskStats;
+  if ((statvfs("/", &diskStats) == 0) {
+    uint64_t blockSize = diskStats.f_frsize;
+    uint64_t totalBlocks = diskStats.f_blocks;
+    uint64_t freeBlockForUser = diskStats.f_bavail;
+    uint64_t totalSpace = totalBlocks * blockSize;
+    uint64_t availSpace = freeBlockForUser * blockSize;
+    uint64_t usedSpace = totalSpace - availSpace;
+    char *out = malloc(50 * sizeof(char));
+    snprintf(out, sizeof(out), "DISK;%lu;%lu\n", usedSpace, totalSpace);
+    return out;
+  } else {
+    perror("Failed to call statvfs");
+    return NULL;
+  }
 }
