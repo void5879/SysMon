@@ -142,11 +142,10 @@ public class IPCClient {
   public SystemUpdate getSystemUpdate() {
     SystemUpdate stats = new SystemUpdate();
     try {
-      String cpuResponse = sendCommand("GET_CPU_STATS"); // "CPU;12.5"
+      String cpuResponse = sendCommand("GET_CPU_STATS");
       if (cpuResponse.startsWith("CPU;")) {
         stats.setCpuUsage(Double.parseDouble(cpuResponse.split(";")[1]));
       }
-
       String memResponse = sendCommand("GET_MEM_STATS");
       for (String line : memResponse.split("\n")) {
         String[] parts = line.split(";");
@@ -154,7 +153,6 @@ public class IPCClient {
           continue;
         String key = parts[0];
         long value = Long.parseLong(parts[1]);
-
         switch (key) {
           case "MEM_TOTAL":
             stats.setMemTotal(value);
@@ -179,21 +177,18 @@ public class IPCClient {
             break;
         }
       }
-
       String netResponse = sendCommand("GET_NET_STATS"); // "NET;down;up;"
       if (netResponse.startsWith("NET;")) {
         String[] parts = netResponse.split(";");
         stats.setNetDownSpeed(Long.parseLong(parts[1]));
         stats.setNetUpSpeed(Long.parseLong(parts[2]));
       }
-
       String diskResponse = sendCommand("GET_DISK_STATS"); // "DISK;used;total"
       if (diskResponse.startsWith("DISK;")) {
         String[] parts = diskResponse.split(";");
         stats.setDiskUsed(Long.parseLong(parts[1]));
         stats.setDiskTotal(Long.parseLong(parts[2]));
       }
-
     } catch (Exception e) {
       System.err.println("Failed to get system update: " + e.getMessage());
       e.printStackTrace();
