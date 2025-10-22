@@ -8,7 +8,7 @@ public class SystemUpdate {
   private long buffers;
   private long cached;
   private long swapTotal;
-  private long swaptFree;
+  private long swapFree;
   private long netDownSpeed;
   private long netUpSpeed;
   private long diskUsed;
@@ -70,12 +70,12 @@ public class SystemUpdate {
     this.swapTotal = swapTotal;
   }
 
-  public long getSwaptFree() {
-    return swaptFree;
+  public long getSwapFree() {
+    return swapFree;
   }
 
-  public void setSwaptFree(long swaptFree) {
-    this.swaptFree = swaptFree;
+  public void setSwapFree(long swapFree) {
+    this.swapFree = swapFree;
   }
 
   public long getNetDownSpeed() {

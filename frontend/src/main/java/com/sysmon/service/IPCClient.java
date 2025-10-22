@@ -17,8 +17,12 @@ package com.sysmon.service;
 
 // Javafx's data model.
 import com.sysmon.model.ProcessInfo;
+import com.sysmon.model.SystemUpdate;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+
+import java.io.IOException;
 // Classes used for the networking part.
 import java.net.StandardProtocolFamily;
 import java.net.UnixDomainSocketAddress;
@@ -32,6 +36,21 @@ import java.util.List;
 
 public class IPCClient {
   private static final String SOCKET_PATH = "/tmp/SysMon"; // Path to the socket file.
+
+  private String sendCommand(String command) throws IOException {
+    UnixDomainSocketAddress address = UnixDomainSocketAddress.of(SOCKET_PATH);
+    try (SocketChannel channel = SocketChannel.open(StandardProtocolFamily.UNIX)) {
+      if (channel.connect(address)) {
+        ByteBuffer writeBuffer = ByteBuffer.wrap((command + "\n").getBytes(StandardCharsets.UTF_8));
+        channel.write(writeBuffer);
+        ByteBuffer readBuffer = ByteBuffer.allocate(2048);
+        channel.read(readBuffer);
+        readBuffer.flip();
+        return StandardCharsets.UTF_8.decode(readBuffer).toString().trim();
+      }
+    }
+    return "ERROR;Connection Failed";
+  }
 
   public ObservableList<ProcessInfo> getProcessList() {
     // Temporarily hold the parsed ProcessInfo objects.
@@ -117,6 +136,69 @@ public class IPCClient {
       e.printStackTrace();
     }
     return FXCollections.observableArrayList(processList);
+  }
+
+  // Add this public method inside IPCClient.java
+  public SystemUpdate getSystemUpdate() {
+    SystemUpdate stats = new SystemUpdate();
+    try {
+      String cpuResponse = sendCommand("GET_CPU_STATS"); // "CPU;12.5"
+      if (cpuResponse.startsWith("CPU;")) {
+        stats.setCpuUsage(Double.parseDouble(cpuResponse.split(";")[1]));
+      }
+
+      String memResponse = sendCommand("GET_MEM_STATS");
+      for (String line : memResponse.split("\n")) {
+        String[] parts = line.split(";");
+        if (parts.length < 2)
+          continue;
+        String key = parts[0];
+        long value = Long.parseLong(parts[1]);
+
+        switch (key) {
+          case "MEM_TOTAL":
+            stats.setMemTotal(value);
+            break;
+          case "MEM_FREE":
+            stats.setMemFree(value);
+            break;
+          case "MEM_AVAIL":
+            stats.setMemAvailable(value);
+            break;
+          case "BUFFERS":
+            stats.setBuffers(value);
+            break;
+          case "CACHED":
+            stats.setCached(value);
+            break;
+          case "SWAP_TOTAL":
+            stats.setSwapTotal(value);
+            break;
+          case "SWAP_FREE":
+            stats.setSwapFree(value);
+            break;
+        }
+      }
+
+      String netResponse = sendCommand("GET_NET_STATS"); // "NET;down;up;"
+      if (netResponse.startsWith("NET;")) {
+        String[] parts = netResponse.split(";");
+        stats.setNetDownSpeed(Long.parseLong(parts[1]));
+        stats.setNetUpSpeed(Long.parseLong(parts[2]));
+      }
+
+      String diskResponse = sendCommand("GET_DISK_STATS"); // "DISK;used;total"
+      if (diskResponse.startsWith("DISK;")) {
+        String[] parts = diskResponse.split(";");
+        stats.setDiskUsed(Long.parseLong(parts[1]));
+        stats.setDiskTotal(Long.parseLong(parts[2]));
+      }
+
+    } catch (Exception e) {
+      System.err.println("Failed to get system update: " + e.getMessage());
+      e.printStackTrace();
+    }
+    return stats;
   }
 
   public boolean killProcess(int pid, int signal) {
