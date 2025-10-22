@@ -259,3 +259,41 @@ char *getMemUsage(void) {
   fclose(file);
   return out;
 }
+
+static uint64_t prevRecBytes = 0;
+static uint64_t prevTxBytes = 0;
+
+char *getNetUsage(void) {
+  FILE *file = fopen("/proc/net/dev", "r");
+  if (!file) {
+    perror("Failed to open /proc/net/dev");
+    return NULL;
+  }
+  char line[512];
+  int i = 0;
+  while (i < 2 && fgets(line, sizeof(line), file) != NULL) {
+    ++i;
+  }
+  uint64_t currentTotalRecv = 0;
+  uint64_t currentTotalTx = 0;
+  uint64_t recBytes = 0;
+  uint64_t txBytes = 0;
+  fgets(line, sizeof(line), file);
+  sscanf(line, "%*s %lu %*s %*s %*s %*s %*s %*s %*s %lu", &recBytes, &txBytes);
+  currentTotalRecv += recBytes;
+  currentTotalTx += txBytes;
+  if (!prevRecBytes) {
+    prevRecBytes = currentTotalRecv;
+    prevTxBytes = currentTotalTx;
+    fclose(file);
+    return "NET;0.0\n";
+  }
+  uint64_t downSpeedBytes = currentTotalRecv - prevRecBytes;
+  uint64_t upSpeedBytes = currentTotalTx - prevTxBytes;
+  prevRecBytes = currentTotalRecv;
+  prevTxBytes = currentTotalTx;
+  char *out = malloc(50 * sizeof(char));
+  snprintf(out, sizeof(out), "NET;%lu;%lu;\n", downSpeedBytes, upSpeedBytes);
+  fclose(file);
+  return out;
+}

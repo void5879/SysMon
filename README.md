@@ -59,7 +59,7 @@ SysMon/
 │   │   └── MainView.fxml       # UI layout definition
 │   └── pom.xml                 # Maven configuration
 ├── LICENSE                     # MIT License
-├── SysMon.sh                   # Automation script 
+├── SysMon.sh                   # Automation script
 └── README.md
 ```
 
@@ -83,6 +83,7 @@ SysMon/
     chmod +x SysMon.sh
     ./SysMon.sh
     ```
+
 ### Usage
 
 1. Run the Automation scipt (./SysMon.sh)
