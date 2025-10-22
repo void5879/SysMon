@@ -319,7 +319,7 @@ char *getDiskUsage(void) {
     uint64_t availSpace = freeBlockForUser * blockSize;
     uint64_t usedSpace = totalSpace - availSpace;
     char *out = malloc(50 * sizeof(char));
-    snprintf(out, sizeof(out), "DISK;%lu;%lu\n", usedSpace, totalSpace);
+    snprintf(out, 50, "DISK;%lu;%lu\n", usedSpace, totalSpace);
     return out;
   } else {
     perror("Failed to call statvfs");

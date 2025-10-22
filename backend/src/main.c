@@ -113,6 +113,53 @@ int main(void) {
           write(cfd, "ERROR;invalid kill command format\n", 35);
           printf("Error: Invalid kill command format: %s\n", buffer);
         }
+      } else if (strcmp(buffer, "GET_CPU_STATS") == 0) {
+        printf("Processing GET_CPU_STATS command...\n");
+        char *cpuData = getCpuUsage();
+        if (cpuData) {
+          write(cfd, cpuData, strlen(cpuData));
+          free(cpuData);
+        } else {
+          const char *errorMsg = "ERROR;Failed to get CPU stats\n";
+          write(cfd, errorMsg, strlen(errorMsg));
+          printf("Error: getCpuUsage returned NULL\n");
+        }
+
+      } else if (strcmp(buffer, "GET_MEM_STATS") == 0) {
+        printf("Processing GET_MEM_STATS command...\n");
+        char *memData = getMemUsage();
+        if (memData) {
+          write(cfd, memData, strlen(memData));
+          free(memData);
+        } else {
+          const char *errorMsg = "ERROR;Failed to get MEM stats\n";
+          write(cfd, errorMsg, strlen(errorMsg));
+          printf("Error: getMemUsage returned NULL\n");
+        }
+
+      } else if (strcmp(buffer, "GET_NET_STATS") == 0) {
+        printf("Processing GET_NET_STATS command...\n");
+        char *netData = getNetUsage();
+        if (netData) {
+          write(cfd, netData, strlen(netData));
+          free(netData);
+        } else {
+          const char *errorMsg = "ERROR;Failed to get NET stats\n";
+          write(cfd, errorMsg, strlen(errorMsg));
+          printf("Error: getNetUsage returned NULL\n");
+        }
+
+      } else if (strcmp(buffer, "GET_DISK_STATS") == 0) {
+        printf("Processing GET_DISK_STATS command...\n");
+        char *diskData = getDiskUsage();
+        if (diskData) {
+          write(cfd, diskData, strlen(diskData));
+          free(diskData);
+        } else {
+          const char *errorMsg = "ERROR;Failed to get DISK stats\n";
+          write(cfd, errorMsg, strlen(errorMsg));
+          printf("Error: getDiskUsage returned NULL\n");
+        }
       } else {
         write(cfd, "ERROR;unknown command\n", 22);
         printf("Error: Unknown command: %s\n", buffer);
