@@ -206,7 +206,7 @@ char *getCpuUsage(void) {
   uint64_t iowait = 0;
   uint64_t irq = 0;
   uint64_t softirq = 0;
-  sscanf(line, "%lu %lu %lu %lu %lu %lu %lu", &user, &nice, &system,
+  sscanf(line, "cpu %lu %lu %lu %lu %lu %lu %lu", &user, &nice, &system,
          &currentIdle, &iowait, &irq, &softirq);
   uint64_t currentTotal =
       user + nice + system + currentIdle + iowait + irq + softirq;
@@ -214,7 +214,9 @@ char *getCpuUsage(void) {
     prevTotal = currentTotal;
     prevIdle = currentIdle;
     fclose(file);
-    return "CPU;0.0\n";
+    char *out = malloc(50 * sizeof(char));
+    snprintf(out, 50, "CPU;0.0\n");
+    return out;
   }
   uint64_t deltaTotal = currentTotal - prevTotal;
   uint64_t deltaIdle = currentIdle - prevIdle;
@@ -223,7 +225,7 @@ char *getCpuUsage(void) {
   prevTotal = currentTotal;
   prevIdle = currentIdle;
   char *out = malloc(50 * sizeof(char));
-  snprintf(out, sizeof(out), "CPU;%.1f\n", usagePercent);
+  snprintf(out, 50, "CPU;%.1f\n", usagePercent);
   fclose(file);
   return out;
 }
@@ -253,7 +255,7 @@ char *getMemUsage(void) {
     found += (sscanf(line, "SwapFree: %lu kB", &swapFree) == 1);
   }
   char *out = malloc(512 * sizeof(char));
-  snprintf(out, sizeof(out),
+  snprintf(out, 512,
            "MEM_TOTAL;%lu\nMEM_FREE;%lu\nMEM_AVAIL;%lu\nBUFFERS;%lu\nCACHED;%"
            "lu\nSWAP_TOTAL;%lu\nSWAP_FREE;%lu\n",
            memTotal, memFree, memAvail, buffers, cached, swapTotal, swapFree);
@@ -277,31 +279,39 @@ char *getNetUsage(void) {
   }
   uint64_t currentTotalRecv = 0;
   uint64_t currentTotalTx = 0;
-  uint64_t recBytes = 0;
-  uint64_t txBytes = 0;
-  fgets(line, sizeof(line), file);
-  sscanf(line, "%*s %lu %*s %*s %*s %*s %*s %*s %*s %lu", &recBytes, &txBytes);
-  currentTotalRecv += recBytes;
-  currentTotalTx += txBytes;
+  while (fgets(line, sizeof(line), file) != NULL) {
+    if (strncmp(line, "lo:", 3) == 0) {
+      continue;
+    }
+    uint64_t recBytes = 0;
+    uint64_t txBytes = 0;
+    sscanf(line, "%*s %lu %*s %*s %*s %*s %*s %*s %*s %lu", &recBytes,
+           &txBytes);
+
+    currentTotalRecv += recBytes;
+    currentTotalTx += txBytes;
+  }
   if (!prevRecBytes) {
     prevRecBytes = currentTotalRecv;
     prevTxBytes = currentTotalTx;
     fclose(file);
-    return "NET;0.0\n";
+    char *out = malloc(50 * sizeof(char));
+    snprintf(out, 50, "NET;0;0;\n");
+    return out;
   }
   uint64_t downSpeedBytes = currentTotalRecv - prevRecBytes;
   uint64_t upSpeedBytes = currentTotalTx - prevTxBytes;
   prevRecBytes = currentTotalRecv;
   prevTxBytes = currentTotalTx;
   char *out = malloc(50 * sizeof(char));
-  snprintf(out, sizeof(out), "NET;%lu;%lu;\n", downSpeedBytes, upSpeedBytes);
+  snprintf(out, 50, "NET;%lu;%lu;\n", downSpeedBytes, upSpeedBytes);
   fclose(file);
   return out;
 }
 
 char *getDiskUsage(void) {
   struct statvfs diskStats;
-  if ((statvfs("/", &diskStats) == 0) {
+  if (statvfs("/", &diskStats) == 0) {
     uint64_t blockSize = diskStats.f_frsize;
     uint64_t totalBlocks = diskStats.f_blocks;
     uint64_t freeBlockForUser = diskStats.f_bavail;
