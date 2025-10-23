@@ -10,127 +10,142 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Priority?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import javafx.scene.chart.PieChart?>
 
 <BorderPane prefHeight="800.0" prefWidth="1200.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.sysmon.controller.MainController">
   <top>
-    <GridPane hgap="10.0" vgap="10.0" BorderPane.alignment="CENTER">
+    <GridPane hgap="15.0" vgap="15.0" styleClass="dashboard-grid" BorderPane.alignment="CENTER">
       <columnConstraints>
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        <ColumnConstraints hgrow="SOMETIMES" percentWidth="33.3" />
+        <ColumnConstraints hgrow="SOMETIMES" percentWidth="33.3" />
+        <ColumnConstraints hgrow="SOMETIMES" percentWidth="33.3" />
       </columnConstraints>
       <rowConstraints>
-          <RowConstraints minHeight="10.0" prefHeight="300.0" vgrow="SOMETIMES" />
+        <RowConstraints minHeight="10.0" prefHeight="300.0" vgrow="SOMETIMES" />
       </rowConstraints>
       <children>
-        <VBox styleClass="dashboard-box" spacing="10.0" GridPane.columnIndex="0">
+        <VBox styleClass="dashboard-box" spacing="15.0" GridPane.columnIndex="0">
           <children>
             <Label text="Memory Usage" styleClass="header-label" />
-            <StackPane>
+            <StackPane VBox.vgrow="ALWAYS">
               <children>
-                <PieChart fx:id="memChart" animated="false" legendVisible="false" title="Memory" />
+                  <PieChart fx:id="memChart" animated="false" legendVisible="false" title="Memory" />
               </children>
             </StackPane>
-            <GridPane vgap="5.0">
+            <GridPane styleClass="info-grid" vgap="8.0">
               <children>
-                <Label text="Total:" />
-                <Label fx:id="lblMemTotal" text="0 GB" GridPane.columnIndex="1" />
-                <Label text="Used:" GridPane.rowIndex="1" />
-                <Label fx:id="lblMemUsed" text="0 GB" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Label text="Free:" GridPane.rowIndex="2" />
-                <Label fx:id="lblMemFree" text="0 GB" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label text="Total:" styleClass="info-label-key" />
+                  <Label fx:id="lblMemTotal" text="0.00 GiB" styleClass="info-label-value" GridPane.columnIndex="1" GridPane.halignment="RIGHT"/>
+                  <Label text="Used:" styleClass="info-label-key" GridPane.rowIndex="1" />
+                  <Label fx:id="lblMemUsed" text="0.00 GiB (0%)" styleClass="info-label-value" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.halignment="RIGHT"/>
+                  <Label text="Free:" styleClass="info-label-key" GridPane.rowIndex="2" />
+                  <Label fx:id="lblMemFree" text="0.00 GiB" styleClass="info-label-value" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.halignment="RIGHT"/>
               </children>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="40.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" />
+              </columnConstraints>
             </GridPane>
           </children>
         </VBox>
 
-        <VBox styleClass="dashboard-box" spacing="10.0" GridPane.columnIndex="1">
+        <VBox styleClass="dashboard-box" spacing="15.0" GridPane.columnIndex="1">
           <children>
             <Label text="CPU Usage" styleClass="header-label" />
-            <StackPane>
+            <StackPane VBox.vgrow="ALWAYS">
               <children>
-                  <PieChart fx:id="cpuChart" animated="false" legendVisible="false" title="CPU" />
+                <PieChart fx:id="cpuChart" animated="false" legendVisible="false" title="CPU" />
               </children>
             </StackPane>
-            <GridPane vgap="5.0">
+            <GridPane styleClass="info-grid" vgap="8.0">
               <children>
-                <Label text="CPU Usage:" />
-                <Label fx:id="lblCpuUsage" text="0.0%" GridPane.columnIndex="1" />
-                <Label text="CPU Cores:" GridPane.rowIndex="1" />
-                <Label fx:id="lblCpuCores" text="0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Label text="Total Processes:" GridPane.rowIndex="2" />
-                <Label fx:id="lblTotalProcesses" text="0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                <Label text="CPU Usage:" styleClass="info-label-key" />
+                <Label fx:id="lblCpuUsage" text="0.0%" styleClass="info-label-value" GridPane.columnIndex="1" GridPane.halignment="RIGHT"/>
+                <Label text="CPU Cores:" styleClass="info-label-key" GridPane.rowIndex="1" />
+                <Label fx:id="lblCpuCores" text="0" styleClass="info-label-value" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.halignment="RIGHT"/>
+                <Label text="Processes:" styleClass="info-label-key" GridPane.rowIndex="2" />
+                <Label fx:id="lblTotalProcesses" text="0" styleClass="info-label-value" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.halignment="RIGHT"/>
               </children>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="40.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" />
+              </columnConstraints>
             </GridPane>
           </children>
         </VBox>
 
-        <VBox styleClass="dashboard-box" spacing="10.0" GridPane.columnIndex="2">
+        <VBox styleClass="dashboard-box" spacing="15.0" GridPane.columnIndex="2">
           <children>
             <Label text="System Info" styleClass="header-label" />
-            <GridPane vgap="5.0">
+            <GridPane styleClass="info-grid" vgap="8.0">
               <children>
-                <Label text="Cached:" />
-                <Label fx:id="lblCached" text="0 GB" GridPane.columnIndex="1" />
-                <Label text="Buffers:" GridPane.rowIndex="1" />
-                <Label fx:id="lblBuffers" text="0 GB" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <Label text="Swap Total:" GridPane.rowIndex="2" />
-                <Label fx:id="lblSwapTotal" text="0 GB" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <Label text="Swap Free:" GridPane.rowIndex="3" />
-                <Label fx:id="lblSwapFree" text="0 GB" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <Label text="Cached:" styleClass="info-label-key" />
+                  <Label fx:id="lblCached" text="0.00 GiB" styleClass="info-label-value" GridPane.columnIndex="1" GridPane.halignment="RIGHT"/>
+                  <Label text="Buffers:" styleClass="info-label-key" GridPane.rowIndex="1" />
+                  <Label fx:id="lblBuffers" text="0.00 GiB" styleClass="info-label-value" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.halignment="RIGHT"/>
+                  <Label text="Swap Total:" styleClass="info-label-key" GridPane.rowIndex="2" />
+                  <Label fx:id="lblSwapTotal" text="0.00 GiB" styleClass="info-label-value" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.halignment="RIGHT"/>
+                  <Label text="Swap Free:" styleClass="info-label-key" GridPane.rowIndex="3" />
+                  <Label fx:id="lblSwapFree" text="0.00 GiB" styleClass="info-label-value" GridPane.columnIndex="1" GridPane.rowIndex="3" GridPane.halignment="RIGHT"/>
               </children>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="40.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" />
+              </columnConstraints>
             </GridPane>
-            
+
             <Label text="Network" styleClass="header-label" />
-            <GridPane vgap="5.0">
+            <GridPane styleClass="info-grid" vgap="8.0">
               <children>
-                <Label text="Download:" />
-                <Label fx:id="lblNetDown" text="0 KB/s" GridPane.columnIndex="1" />
-                <Label text="Upload:" GridPane.rowIndex="1" />
-                <Label fx:id="lblNetUp" text="0 KB/s" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                <Label text="Download:" styleClass="info-label-key" />
+                <Label fx:id="lblNetDown" text="0 KiB/s" styleClass="info-label-value" GridPane.columnIndex="1" GridPane.halignment="RIGHT"/>
+                <Label text="Upload:" styleClass="info-label-key" GridPane.rowIndex="1" />
+                <Label fx:id="lblNetUp" text="0 KiB/s" styleClass="info-label-value" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.halignment="RIGHT"/>
               </children>
+              <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="40.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="60.0" />
+              </columnConstraints>
             </GridPane>
           </children>
         </VBox>
       </children>
       <padding>
-        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+        <Insets bottom="10.0" left="15.0" right="15.0" top="15.0" />
       </padding>
     </GridPane>
   </top>
   <center>
-    <VBox BorderPane.alignment="CENTER">
+    <VBox spacing="5.0" BorderPane.alignment="CENTER">
       <children>
-        <HBox alignment="CENTER_LEFT" spacing="10.0">
+        <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="toolbar">
           <children>
             <Label text="Running Processes" styleClass="header-label" />
             <CheckBox fx:id="chkAutoRefresh" mnemonicParsing="false" selected="true" text="Auto-refresh (3s)" />
-            <Button fx:id="btnRefresh" mnemonicParsing="false" text="Refresh Now" />
+            <HBox HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnEndTask" mnemonicParsing="false" text="Kill Selected Process" styleClass="kill-button-single" disable="true"/>
           </children>
-          <padding>
-            <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
-          </padding>
         </HBox>
-        <TableView fx:id="processTable" VBox.vgrow="ALWAYS">
+          
+        <TableView fx:id="processTable" VBox.vgrow="ALWAYS">    
           <columns>
-            <TableColumn fx:id="pidColumn" prefWidth="75.0" text="PID" />
-            <TableColumn fx:id="commandColumn" prefWidth="250.0" text="Name" />
-            <TableColumn fx:id="userColumn" prefWidth="120.0" text="User" />
-            <TableColumn fx:id="stateColumn" prefWidth="75.0" text="State" />
-            
-            <TableColumn fx:id="cpuPercentColumn" prefWidth="100.0" text="CPU %" />
-            <TableColumn fx:id="memPercentColumn" prefWidth="100.0" text="MEM %" />
-            <TableColumn fx:id="memRssColumn" prefWidth="120.0" text="Memory (RSS)" />
-
-            <TableColumn fx:id="actionColumn" prefWidth="100.0" text="Action" />
+            <TableColumn fx:id="pidColumn" text="PID" />
+            <TableColumn fx:id="commandColumn" text="Name" />
+            <TableColumn fx:id="userColumn" text="User" />
+            <TableColumn fx:id="stateColumn" text="State" />
+            <TableColumn fx:id="cpuPercentColumn" text="CPU %" />
+            <TableColumn fx:id="memPercentColumn" text="MEM %" />
+            <TableColumn fx:id="memRssColumn" text="Memory (RSS)" />
           </columns>
         </TableView>
       </children>
+      <padding>
+        <Insets bottom="15.0" left="15.0" right="15.0" />
+      </padding>
     </VBox>
   </center>
 </BorderPane>

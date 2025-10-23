@@ -1,16 +1,11 @@
 /*
- ███████╗ ███╗   ██╗ ████████╗ ██████╗  ██╗   ██╗     ██████╗   ██████╗  ██╗ ███╗   ██╗ ████████╗
- ██╔════╝ ████╗  ██║ ╚══██╔══╝ ██╔══██╗ ╚██╗ ██╔╝     ██╔══██╗ ██╔═══██╗ ██║ ████╗  ██║ ╚══██╔══╝
- █████╗   ██╔██╗ ██║    ██║    ██████╔╝  ╚████╔╝      ██████╔╝ ██║   ██║ ██║ ██╔██╗ ██║    ██║
- ██╔══╝   ██║╚██╗██║    ██║    ██╔══██╗   ╚██╔╝       ██╔═══╝  ██║   ██║ ██║ ██║╚██╗██║    ██║
- ███████╗ ██║ ╚████║    ██║    ██║  ██║    ██║        ██║      ╚██████╔╝ ██║ ██║ ╚████║    ██║
- ╚══════╝ ╚═╝  ╚═══╝    ╚═╝    ╚═╝  ╚═╝    ╚═╝        ╚═╝       ╚═════╝  ╚═╝ ╚═╝  ╚═══╝    ╚═╝
+ - ENTRY POINT:
+ - Main application entry point.
+ - This class is responsible for launching the JavaFX application.
+ - It loads the FXML view (MainView.fxml), loads the CSS stylesheet (styles.css),
+   and displays the primary stage (the main window).
 */
 
-/*
- - JavaFX application entry point.
- - Loads the main FXML layout and initializes the primary application window.
-*/
 package com.sysmon;
 
 import java.io.IOException;
@@ -25,8 +20,8 @@ public class App extends Application {
 
     FXMLLoader fxmlLoader = new FXMLLoader(App.class.getResource("MainView.fxml"));
 
-    Scene scene = new Scene(fxmlLoader.load(), 800, 600);
-
+    Scene scene = new Scene(fxmlLoader.load(), 1200, 800);
+    scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
     stage.setTitle("SysMon");
     stage.setScene(scene);
     stage.show();

@@ -1,9 +1,12 @@
 #pragma once
 
+#include <stdint.h>
 #include <stdlib.h>
 
 typedef struct {
   int pid;
+  uint64_t totalTime;
+  uint64_t memRssKb;
   char processName[256];
   char state;
   int ppid;

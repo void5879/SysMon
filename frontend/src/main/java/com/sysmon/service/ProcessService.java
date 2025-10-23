@@ -1,31 +1,19 @@
 /*
- ██████╗   █████╗   ██████╗ ██╗  ██╗  ██████╗  ██████╗   ██████╗  ██╗   ██╗ ███╗   ██╗ ██████╗      ██╗    ██╗  ██████╗  ██████╗  ██╗  ██╗ ███████╗ ██████╗ 
- ██╔══██╗ ██╔══██╗ ██╔════╝ ██║ ██╔╝ ██╔════╝  ██╔══██╗ ██╔═══██╗ ██║   ██║ ████╗  ██║ ██╔══██╗     ██║    ██║ ██╔═══██╗ ██╔══██╗ ██║ ██╔╝ ██╔════╝ ██╔══██╗
- ██████╔╝ ███████║ ██║      █████╔╝  ██║  ███╗ ██████╔╝ ██║   ██║ ██║   ██║ ██╔██╗ ██║ ██║  ██║     ██║ █╗ ██║ ██║   ██║ ██████╔╝ █████╔╝  █████╗   ██████╔╝
- ██╔══██╗ ██╔══██║ ██║      ██╔═██╗  ██║   ██║ ██╔══██╗ ██║   ██║ ██║   ██║ ██║╚██╗██║ ██║  ██║     ██║███╗██║ ██║   ██║ ██╔══██╗ ██╔═██╗  ██╔══╝   ██╔══██╗
- ██████╔╝ ██║  ██║ ╚██████╗ ██║  ██╗ ╚██████╔╝ ██║  ██║ ╚██████╔╝ ╚██████╔╝ ██║ ╚████║ ██████╔╝     ╚███╔███╔╝ ╚██████╔╝ ██║  ██║ ██║  ██╗ ███████╗ ██║  ██║
- ╚═════╝  ╚═╝  ╚═╝  ╚═════╝ ╚═╝  ╚═╝  ╚═════╝  ╚═╝  ╚═╝  ╚═════╝   ╚═════╝  ╚═╝  ╚═══╝ ╚═════╝       ╚══╝╚══╝   ╚═════╝  ╚═╝  ╚═╝ ╚═╝  ╚═╝ ╚══════╝ ╚═╝  ╚═╝
+ - BACKGROUND WORKER:
+ - A JavaFX Service that runs the ipcClient.getProcessList() method on a
+   background thread.
+ - Its sole purpose is to fetch the full process list asynchronously, preventing
+   the UI (main thread) from freezing during the update.
+ - The MainController observes this service for a "succeeded" event to update
+   the process table.
 */
 
-/*
- - This is a wrapper around the IPCClient.
- - It runs the socket communication in a background thread.
- - Keeps the UI responsive.
-*/
 package com.sysmon.service;
 
 import com.sysmon.model.ProcessInfo;
 import javafx.collections.ObservableList;
-import javafx.concurrent.Service; // Service is a high-level manager that that executes a Task.
-import javafx.concurrent.Task; // Task is the object that contains the actual code to be run in the background. 
-// The ProcessService class inherits the background-processing capabilities from  the Service class.
-/*
- * NOTE :
- * In JavaFX, Service<T> is a high-level API for running long-running background tasks (like querying processes, fetching data, etc.) without blocking the UI thread.
- * Service<T> is an abstract class.
- * Need to subclass it and implement its createTask() method, which defines the work to be done in the background.
- * The result type of that background work is T.
-*/
+import javafx.concurrent.Service;
+import javafx.concurrent.Task;
 
 public class ProcessService extends Service<ObservableList<ProcessInfo>> {
   private final IPCClient ipcClient = new IPCClient();

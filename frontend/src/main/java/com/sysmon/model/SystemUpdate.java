@@ -1,3 +1,12 @@
+/*
+ - SYSTEM DETAILS:
+ - Data model for a system-wide statistics snapshot.
+ - This class holds all the global data fetched from the C backend (e.g.,
+   aggregate CPU usage, memory stats, network speeds, disk usage).
+ - It also holds the raw `systemTotalTime` needed by the MainController
+   to calculate per-process CPU deltas.
+*/
+
 package com.sysmon.model;
 
 public class SystemUpdate {
@@ -13,6 +22,15 @@ public class SystemUpdate {
   private long netUpSpeed;
   private long diskUsed;
   private long diskTotal;
+  private long systemTotalTime;
+
+  public long getSystemTotalTime() {
+    return systemTotalTime;
+  }
+
+  public void setSystemTotalTime(long systemTotalTime) {
+    this.systemTotalTime = systemTotalTime;
+  }
 
   public double getCpuUsage() {
     return cpuUsage;

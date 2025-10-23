@@ -1,23 +1,19 @@
-// Copyright (c) 2025 void5879. All Rights Reserved.
 /*
- ██████╗   █████╗   ██████╗ ██╗  ██╗ ███████╗ ███╗   ██╗ ██████╗
- ██╔══██╗ ██╔══██╗ ██╔════╝ ██║ ██╔╝ ██╔════╝ ████╗  ██║ ██╔══██╗
- ██████╔╝ ███████║ ██║      █████╔╝  █████╗   ██╔██╗ ██║ ██║  ██║
- ██╔══██╗ ██╔══██║ ██║      ██╔═██╗  ██╔══╝   ██║╚██╗██║ ██║  ██║
- ██████╔╝ ██║  ██║ ╚██████╗ ██║  ██╗ ███████╗ ██║ ╚████║ ██████╔╝
- ╚═════╝  ╚═╝  ╚═╝  ╚═════╝ ╚═╝  ╚═╝ ╚══════╝ ╚═╝  ╚═══╝ ╚═════╝
-
- - This file provides the implementation details for the backend functions
- employed by the appliation.
- - readProcStat: reads the stat file in the proc dir and extracts the pid, ppid,
- state and processName.
- - readProcStatus: reads the status file in the proc dir and extracts the uid to
- get the userName.
- - scanProcDir: uses the readProcStat and readProcStatus to get and return the
- ongoing list of processess.
- - formatProcessList: formats the list returned by the scanProcDir so as to send
- it to the client.
+ - Implements all data-gathering functions for the backend.
+ - `readProcStat`: Reads /proc/[pid]/stat for PID, name, state, PPID,
+   and total CPU time (utime + stime).
+ - `readProcStatus`: Reads /proc/[pid]/status for username (from UID)
+   and RSS memory (VmRSS).
+ - `scanProcDir`: Scans /proc, calling stat/status for each process.
+ - `formatProcessList`: Formats all 7 process fields into a tab-delimited
+   string for the client.
+ - `getCpuUsage`: Calculates aggregate CPU % and returns raw total system
+   time from /proc/stat.
+ - `getMemUsage`: Parses /proc/meminfo for memory/swap statistics.
+ - `getNetUsage`: Calculates network speed deltas from /proc/net/dev.
+ - `getDiskUsage`: Uses statvfs to get root filesystem usage.
 */
+
 #include "procParser.h"
 #include <ctype.h>
 #include <dirent.h>
@@ -31,6 +27,7 @@
 
 static void readProcStat(const char *filepath, ProcessData *p) {
   p->pid = 0;
+  p->totalTime = 0;
   FILE *file = fopen(filepath, "r");
   if (file == NULL) {
     return;
@@ -58,24 +55,33 @@ static void readProcStat(const char *filepath, ProcessData *p) {
   }
   strncpy(p->processName, leftParen + 1, len);
   p->processName[len] = '\0';
-  if (rightParen != NULL) {
-    sscanf(rightParen + 2, "%c %d", &p->state, &p->ppid);
-  }
+  char *stats = rightParen + 2;
+  uint64_t utime = 0;
+  uint64_t stime = 0;
+  sscanf(stats, "%c %d %*s %*s %*s %*s %*s %*s %*s %*s %*s %lu %lu", &p->state,
+         &p->ppid, &utime, &stime);
+
+  p->totalTime = utime + stime;
 }
 
 static void readProcStatus(const char *filepath, ProcessData *p) {
   uid_t uid = -1;
+  p->memRssKb = 0;
   FILE *file = fopen(filepath, "r");
   if (file == NULL) {
     return;
   }
 
   char buffer[256];
+  int found = 0;
 
-  while (fgets(buffer, sizeof(buffer), file)) {
+  while (found < 2 && fgets(buffer, sizeof(buffer), file)) {
     if (strncmp(buffer, "Uid:", 4) == 0) {
       sscanf(buffer, "Uid:\t%u", &uid);
-      break;
+      found++;
+    } else if (strncmp(buffer, "VmRSS:", 6) == 0) {
+      sscanf(buffer, "VmRSS:\t%lu kB", &p->memRssKb);
+      found++;
     }
   }
   fclose(file);
@@ -156,8 +162,9 @@ char *formatProcessList(ProcessData *processList, size_t processCount) {
     ProcessData *p = &processList[i];
 
     int lineLen =
-        snprintf(lineBuffer, sizeof(lineBuffer), "%d\t%d\t%s\t%c\t%s\n", p->pid,
-                 p->ppid, p->userName, p->state, p->processName);
+        snprintf(lineBuffer, sizeof(lineBuffer),
+                 "%d\t%d\t%s\t%c\t%s\t%lu\t%lu\n", p->pid, p->ppid, p->userName,
+                 p->state, p->processName, p->totalTime, p->memRssKb);
 
     if (currentLen + lineLen >= capacity) {
       capacity *= 2;
@@ -210,22 +217,23 @@ char *getCpuUsage(void) {
          &currentIdle, &iowait, &irq, &softirq);
   uint64_t currentTotal =
       user + nice + system + currentIdle + iowait + irq + softirq;
+  char *out = malloc(50 * sizeof(char));
   if (!prevTotal) {
     prevTotal = currentTotal;
     prevIdle = currentIdle;
-    fclose(file);
-    char *out = malloc(50 * sizeof(char));
-    snprintf(out, 50, "CPU;0.0\n");
-    return out;
+    snprintf(out, 50, "CPU;0.0;%lu\n", currentTotal);
+  } else {
+    uint64_t deltaTotal = currentTotal - prevTotal;
+    uint64_t deltaIdle = currentIdle - prevIdle;
+    double usagePercent =
+        (deltaTotal > 0)
+            ? (1.0 - ((double)deltaIdle / (double)deltaTotal)) * 100.0
+            : 0.0;
+
+    prevTotal = currentTotal;
+    prevIdle = currentIdle;
+    snprintf(out, 50, "CPU;%.1f;%lu\n", usagePercent, currentTotal);
   }
-  uint64_t deltaTotal = currentTotal - prevTotal;
-  uint64_t deltaIdle = currentIdle - prevIdle;
-  double usagePercent =
-      (1.0 - ((double)deltaIdle / (double)deltaTotal)) * 100.0;
-  prevTotal = currentTotal;
-  prevIdle = currentIdle;
-  char *out = malloc(50 * sizeof(char));
-  snprintf(out, 50, "CPU;%.1f\n", usagePercent);
   fclose(file);
   return out;
 }

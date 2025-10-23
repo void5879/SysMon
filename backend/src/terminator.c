@@ -1,16 +1,9 @@
 /*
- ███████╗ ███╗   ██╗ ██████╗      ████████╗  █████╗  ███████╗ ██╗  ██╗
- ██╔════╝ ████╗  ██║ ██╔══██╗     ╚══██╔══╝ ██╔══██╗ ██╔════╝ ██║ ██╔╝
- █████╗   ██╔██╗ ██║ ██║  ██║        ██║    ███████║ ███████╗ █████╔╝
- ██╔══╝   ██║╚██╗██║ ██║  ██║        ██║    ██╔══██║ ╚════██║ ██╔═██╗
- ███████╗ ██║ ╚████║ ██████╔╝        ██║    ██║  ██║ ███████║ ██║  ██╗
- ╚══════╝ ╚═╝  ╚═══╝ ╚═════╝         ╚═╝    ╚═╝  ╚═╝ ╚══════╝ ╚═╝  ╚═╝
+ - Function definition for process termination.
+ - Takes the pid and signal code (e.g., SIGTERM(15) or SIGKILL(9)) as input.
+ - Uses the kill() system call to send the signal to the specified process.
 */
 
-/*
- - Function definition for process termination.
- - Takes the pid and signal code (SIGTERM(15) or SIGKILL(9)) as input.
-*/
 #define _GNU_SOURCE
 #include "terminator.h"
 #include <signal.h>
